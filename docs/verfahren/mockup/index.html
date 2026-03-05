@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DTA-Experten-App · Mockup v0.1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+  
+  :root {
+    --bg:       #07090f;
+    --surface:  #0d1117;
+    --border:   #1a2236;
+    --accent:   #2d6ef7;
+    --accent2:  #00d4aa;
+    --warn:     #f59e0b;
+    --error:    #ef4444;
+    --text:     #c9d1e0;
+    --muted:    #4a5568;
+    --label:    #7c8fa8;
+    --mono:     'IBM Plex Mono', monospace;
+    --sans:     'IBM Plex Sans', sans-serif;
+    --display:  'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 52px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 200;
+  }
+  .topbar-logo {
+    font-family: var(--display); font-weight: 800; font-size: 15px;
+    letter-spacing: 0.5px; color: #fff;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .topbar-logo .badge {
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 4px; letter-spacing: 1px;
+  }
+  .topbar-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .topbar-meta .ver { color: var(--accent2); }
+  .topbar-meta .src a { color: var(--muted); text-decoration: none; }
+  .topbar-meta .src a:hover { color: var(--accent2); }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr 340px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    padding: 6px 16px 4px;
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase;
+    margin-top: 10px;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px; cursor: pointer;
+    font-size: 13px; color: var(--label);
+    border-left: 2px solid transparent;
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .sidebar-item:hover { background: rgba(45,110,247,0.06); color: var(--text); }
+  .sidebar-item.active {
+    border-left-color: var(--accent);
+    background: rgba(45,110,247,0.1);
+    color: #fff;
+  }
+  .sidebar-item .dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+  .dot-active { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+  .dot-planned { background: var(--muted); }
+  .sidebar-item .pill {
+    margin-left: auto;
+    font-family: var(--mono); font-size: 9px;
+    padding: 1px 6px; border-radius: 3px;
+    background: rgba(45,110,247,0.15); color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .pill-plan { background: rgba(74,85,104,0.3) !important; color: var(--muted) !important; }
+
+  /* ── MAIN ── */
+  .main {
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+    padding: 28px 32px;
+    gap: 24px;
+  }
+
+  .page-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .page-title {
+    font-family: var(--display); font-weight: 700; font-size: 22px; color: #fff;
+    line-height: 1.2;
+  }
+  .page-subtitle {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    margin-top: 5px;
+  }
+  .page-header-badges { display: flex; gap: 8px; flex-shrink: 0; }
+  .hbadge {
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    padding: 4px 10px; border-radius: 5px; border: 1px solid;
+    letter-spacing: 0.5px;
+  }
+  .hbadge-law { border-color: rgba(45,110,247,0.4); color: var(--accent); background: rgba(45,110,247,0.08); }
+  .hbadge-ver { border-color: rgba(0,212,170,0.4); color: var(--accent2); background: rgba(0,212,170,0.07); }
+
+  /* ── ABILITIES TOGGLE BAR ── */
+  .ability-bar {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .ability-label {
+    font-family: var(--mono); font-size: 10px; color: var(--muted);
+    letter-spacing: 1px; text-transform: uppercase;
+    width: 100%; margin-bottom: 4px;
+  }
+  .ability-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--muted);
+    font-family: var(--mono); font-size: 11px;
+    transition: all 0.15s; user-select: none;
+  }
+  .ability-btn.on {
+    border-color: var(--accent);
+    background: rgba(45,110,247,0.12);
+    color: #a3c0ff;
+  }
+  .ability-btn.on .ab-icon { color: var(--accent); }
+  .ability-btn.disabled-ab {
+    opacity: 0.35; cursor: not-allowed;
+  }
+  .ab-icon { font-size: 13px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-title {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--label); letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  .card-body { padding: 18px; }
+
+  /* ── FORM GRID ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 20px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    color: var(--label); letter-spacing: 0.8px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .req { color: var(--error); font-size: 11px; }
+  .opt { color: var(--muted); font-size: 9px; font-weight: 400; letter-spacing: 0; }
+  .form-input, .form-select {
+    background: #0a0f1a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-family: var(--mono); font-size: 12px;
+    width: 100%;
+    transition: border-color 0.15s;
+    outline: none;
+    appearance: none;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--accent); }
+  .form-input.valid { border-color: var(--accent2); }
+  .form-input.invalid { border-color: var(--error); }
+  .form-hint {
+    font-family: var(--sans); font-size: 11px; color: var(--muted); margin-top: 2px;
+  }
+  .form-hint.err { color: var(--error); }
+
+  /* ── MELDEGRUND SELECTOR ── */
+  .mg-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mg-btn {
+    padding: 8px 14px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--label);
+    font-family: var(--mono); font-size: 11px;
+    transition: all 0.15s; user-select: none;
+  }
+  .mg-btn:hover { border-color: var(--accent); color: var(--text); }
+  .mg-btn.selected {
+    border-color: var(--accent); background: rgba(45,110,247,0.14);
+    color: #a3c0ff;
+  }
+  .mg-code { font-weight: 700; margin-right: 4px; color: var(--accent2); }
+  .mg-who { font-size: 9px; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 6px; }
+  .btn {
+    padding: 9px 20px; border-radius: 7px; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.5px; border: none; transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    box-shadow: 0 4px 16px rgba(45,110,247,0.3);
+  }
+  .btn-primary:hover { background: #1a5de8; }
+  .btn-secondary {
+    background: transparent; color: var(--label);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--text); }
+
+  /* ── OUTPUT PANEL ── */
+  .panel {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0;
+    background: var(--surface); z-index: 10;
+  }
+  .panel-title {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--label); letter-spacing: 1.2px; text-transform: uppercase;
+  }
+  .panel-tabs { display: flex; gap: 4px; }
+  .ptab {
+    padding: 4px 10px; border-radius: 5px; cursor: pointer;
+    font-family: var(--mono); font-size: 10px;
+    border: 1px solid transparent; color: var(--muted);
+    transition: all 0.12s; user-select: none;
+  }
+  .ptab.active { border-color: var(--border); background: #0a0f1a; color: var(--text); }
+  .panel-body { padding: 18px; flex: 1; }
+
+  /* XML output */
+  .xml-block {
+    background: #050810;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: var(--mono); font-size: 11px;
+    line-height: 1.8;
+    overflow-x: auto;
+    color: #8899bb;
+  }
+  .xml-block .xt { color: #5b8cff; }   /* tag */
+  .xml-block .xa { color: #00d4aa; }   /* attr */
+  .xml-block .xv { color: #f0c070; }   /* value */
+  .xml-block .xc { color: #3a4a60; font-style: italic; }  /* comment */
+
+  /* Validation list */
+  .v-list { display: flex; flex-direction: column; gap: 8px; }
+  .v-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; border-radius: 7px;
+    font-size: 12px;
+  }
+  .v-ok  { background: rgba(0,212,170,0.06); border: 1px solid rgba(0,212,170,0.2); }
+  .v-err { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); }
+  .v-warn{ background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); }
+  .v-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+  .v-text { flex: 1; }
+  .v-field { font-family: var(--mono); font-size: 10px; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* Roadmap */
+  .roadmap { display: flex; flex-direction: column; gap: 6px; }
+  .rm-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .rm-done { border-color: rgba(0,212,170,0.2); background: rgba(0,212,170,0.04); }
+  .rm-active { border-color: rgba(45,110,247,0.3); background: rgba(45,110,247,0.06); }
+  .rm-plan { opacity: 0.45; }
+  .rm-icon { font-size: 13px; flex-shrink: 0; }
+  .rm-label { flex: 1; font-family: var(--mono); font-size: 11px; }
+  .rm-ver { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+
+  /* Status chips */
+  .chip {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px;
+  }
+  .chip-live { background: rgba(0,212,170,0.12); color: var(--accent2); border: 1px solid rgba(0,212,170,0.25); }
+  .chip-dev  { background: rgba(45,110,247,0.12); color: var(--accent);  border: 1px solid rgba(45,110,247,0.25); }
+  .chip-plan { background: rgba(74,85,104,0.2);   color: var(--muted);   border: 1px solid rgba(74,85,104,0.3); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+  /* Mockup label */
+  .mockup-ribbon {
+    position: fixed; bottom: 14px; right: 14px;
+    background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 7px; padding: 6px 12px;
+    font-family: var(--mono); font-size: 10px; color: var(--warn);
+    letter-spacing: 1px; text-transform: uppercase;
+    z-index: 999;
+  }
+
+  select option { background: #0d1117; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <span class="badge">DTA</span>
+    Experten-Applikation
+  </div>
+  <div class="topbar-meta">
+    <span class="ver">v0.1-mockup</span>
+    <span class="src">Quelle: <a href="https://www.gkv-datenaustausch.de" target="_blank">gkv-datenaustausch.de</a></span>
+    <span>§ 199a SGB V · gültig ab 01.07.2023</span>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR: Verfahren -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Verfahren</div>
+
+    <div class="sidebar-item active">
+      <span class="dot dot-active"></span>
+      Studenten-Meldeverfahren
+      <span class="pill">SMV</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="dot dot-planned"></span>
+      §302 Abrechnung
+      <span class="pill pill-plan">Geplant</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="dot dot-planned"></span>
+      §295 Abrechnung
+      <span class="pill pill-plan">Geplant</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="dot dot-planned"></span>
+      KV45
+      <span class="pill pill-plan">Geplant</span>
+    </div>
+    <div class="sidebar-item">
+      <span class="dot dot-planned"></span>
+      DTA-PV
+      <span class="pill pill-plan">Geplant</span>
+    </div>
+
+    <div class="sidebar-section" style="margin-top:20px">Roadmap</div>
+    <div class="roadmap" style="padding: 0 12px; gap:5px;">
+      <div class="rm-item rm-active">
+        <span class="rm-icon">🔧</span>
+        <span class="rm-label">SMV Testdaten</span>
+        <span class="rm-ver">Phase 1</span>
+      </div>
+      <div class="rm-item rm-plan">
+        <span class="rm-icon">📋</span>
+        <span class="rm-label">§302 Fehlercodes</span>
+        <span class="rm-ver">Phase 2</span>
+      </div>
+      <div class="rm-item rm-plan">
+        <span class="rm-icon">📋</span>
+        <span class="rm-label">Plausibilität</span>
+        <span class="rm-ver">Phase 3</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN: Formular -->
+  <main class="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Studenten-Meldeverfahren</div>
+        <div class="page-subtitle">TESTDATEN-GENERATOR · Anlage 1 &amp; 2 · Version 2.0</div>
+      </div>
+      <div class="page-header-badges">
+        <span class="hbadge hbadge-law">§ 199a SGB V</span>
+        <span class="hbadge hbadge-ver">Version 2.0</span>
+        <span class="chip chip-dev">In Entwicklung</span>
+      </div>
+    </div>
+
+    <!-- Ability Bar -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Aktive Fähigkeiten für dieses Verfahren</span>
+      </div>
+      <div class="card-body" style="padding:14px 18px;">
+        <div class="ability-bar" style="border:none;padding:0;">
+          <div class="ability-label">Fähigkeit aktivieren / deaktivieren</div>
+          <div class="ability-btn on" onclick="toggleAbility(this)">
+            <span class="ab-icon">⚙️</span> Testdaten generieren
+          </div>
+          <div class="ability-btn disabled-ab" title="Folgt in Phase 2">
+            <span class="ab-icon">🔍</span> Fehlercodes (Phase 2)
+          </div>
+          <div class="ability-btn disabled-ab" title="Folgt in Phase 3">
+            <span class="ab-icon">✅</span> Plausibilitätsprüfung (Phase 3)
+          </div>
+          <div class="ability-btn disabled-ab" title="Folgt in Phase 2">
+            <span class="ab-icon">📄</span> Dokumentation (Phase 2)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meldegrund -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Meldegrund auswählen</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">Gemeinsame Grundsätze § 199a Abs. 7 SGB V · Anlage 1 &amp; 2</span>
+      </div>
+      <div class="card-body">
+        <div class="mg-grid">
+          <div class="mg-btn" onclick="selectMG(this,'10')">
+            <span class="mg-code">10</span>Versicherungsstatus
+            <span class="mg-who">↑ Krankenkasse → Hochschule</span>
+          </div>
+          <div class="mg-btn" onclick="selectMG(this,'11')">
+            <span class="mg-code">11</span>Beginn KK-Wechsel
+            <span class="mg-who">↑ Krankenkasse → Hochschule</span>
+          </div>
+          <div class="mg-btn" onclick="selectMG(this,'12')">
+            <span class="mg-code">12</span>Beitragsverzug
+            <span class="mg-who">↑ Krankenkasse → Hochschule</span>
+          </div>
+          <div class="mg-btn" onclick="selectMG(this,'13')">
+            <span class="mg-code">13</span>Beitr. beglichen
+            <span class="mg-who">↑ Krankenkasse → Hochschule</span>
+          </div>
+          <div class="mg-btn selected" id="mg20" onclick="selectMG(this,'20')">
+            <span class="mg-code">20</span>Beginn des Studiums
+            <span class="mg-who">↑ Hochschule → Krankenkasse</span>
+          </div>
+          <div class="mg-btn" onclick="selectMG(this,'30')">
+            <span class="mg-code">30</span>Ende des Studiums
+            <span class="mg-who">↑ Hochschule → Krankenkasse</span>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding:10px 14px;background:rgba(45,110,247,0.06);border-radius:7px;border:1px solid rgba(45,110,247,0.2);">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--label);">AKTIV: </span>
+          <span id="mg-desc" style="font-size:12px;color:var(--text);">Meldegrund 20 – Beginn des Studiums: Die Hochschule meldet Beginn des Semesters und Tag der Einschreibung nach Eingang der Meldung über den Versicherungsstatus. (Anlage 2)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formular -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">Testdaten eingeben</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted)"><span style="color:var(--error)">*</span> = Pflichtfeld</span>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+
+          <!-- KVNR -->
+          <div class="form-group">
+            <label class="form-label">KVNR <span class="req">*</span></label>
+            <input class="form-input" id="kvnr" type="text" placeholder="A123456789" maxlength="10"
+              oninput="validateKVNR(this)" autocomplete="off"/>
+            <span class="form-hint" id="kvnr-hint">10 Stellen: 1 Buchstabe + 9 Ziffern</span>
+          </div>
+
+          <!-- Betriebsnummer KK -->
+          <div class="form-group">
+            <label class="form-label">Betriebsnummer KK <span class="req">*</span></label>
+            <input class="form-input" id="bbnr" type="text" placeholder="99999999" maxlength="8"
+              oninput="validateBBNR(this)" autocomplete="off"/>
+            <span class="form-hint" id="bbnr-hint">8-stellige Betriebsnummer der Krankenkasse</span>
+          </div>
+
+          <!-- Absendernummer Hochschule -->
+          <div class="form-group">
+            <label class="form-label">Absendernummer HS <span class="req">*</span></label>
+            <input class="form-input" id="absender" type="text" placeholder="HS12345678"
+              oninput="validateAbsender(this)" autocomplete="off"/>
+            <span class="form-hint" id="absender-hint">Vergabe durch GKV-Spitzenverband / ITSG</span>
+          </div>
+
+          <!-- Nachname -->
+          <div class="form-group">
+            <label class="form-label">Nachname <span class="req">*</span></label>
+            <input class="form-input" id="nachname" type="text" placeholder="Mustermann" autocomplete="off"/>
+          </div>
+
+          <!-- Vorname -->
+          <div class="form-group">
+            <label class="form-label">Vorname <span class="req">*</span></label>
+            <input class="form-input" id="vorname" type="text" placeholder="Maria" autocomplete="off"/>
+          </div>
+
+          <!-- Geburtsdatum -->
+          <div class="form-group">
+            <label class="form-label">Geburtsdatum <span class="req">*</span></label>
+            <input class="form-input" id="gebdat" type="date" oninput="validateAlter(this)"/>
+            <span class="form-hint" id="gebdat-hint">Versicherungspflicht bis max. 30. LJ (§ 5 Abs. 1 Nr. 9 SGB V)</span>
+          </div>
+
+          <!-- Semesterbeginn -->
+          <div class="form-group">
+            <label class="form-label">Semesterbeginn <span class="req">*</span></label>
+            <select class="form-select" id="sembegin">
+              <option value="">– auswählen –</option>
+              <option value="2025-04-01">SoSe 2025 (01.04.2025)</option>
+              <option value="2025-10-01">WiSe 2025/26 (01.10.2025)</option>
+              <option value="2026-04-01">SoSe 2026 (01.04.2026)</option>
+              <option value="2026-10-01">WiSe 2026/27 (01.10.2026)</option>
+            </select>
+          </div>
+
+          <!-- Tag der Einschreibung -->
+          <div class="form-group">
+            <label class="form-label">Tag der Einschreibung <span class="req">*</span></label>
+            <input class="form-input" id="einschreibung" type="date"/>
+            <span class="form-hint">Meldegrund 20: frühestens = Semesterbeginn</span>
+          </div>
+
+          <!-- Stornokennzeichen -->
+          <div class="form-group">
+            <label class="form-label">Stornokennzeichen <span class="opt">(optional)</span></label>
+            <select class="form-select" id="storno">
+              <option value="N">N – Keine Stornierung</option>
+              <option value="J">J – Stornierung der ursprünglichen Meldung</option>
+            </select>
+            <span class="form-hint">J = fehlerhafte Meldung stornieren (Ziffer 10 GG)</span>
+          </div>
+
+          <!-- Anschrift -->
+          <div class="form-group">
+            <label class="form-label">Anschrift (Straße) <span class="opt">(optional ab 07/2023)</span></label>
+            <input class="form-input" id="strasse" type="text" placeholder="Musterstraße 1, 12345 Berlin"/>
+            <span class="form-hint">Neu ab Version 2.0 (GKV-FinStG)</span>
+          </div>
+
+        </div>
+
+        <hr class="divider"/>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="generateXML()">⚙ Testdaten generieren</button>
+          <button class="btn btn-secondary" onclick="fillDemo()">↺ Demo-Daten laden</button>
+          <button class="btn btn-secondary" onclick="clearForm()">✕ Felder leeren</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT PANEL: Output -->
+  <aside class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Ausgabe</span>
+      <div class="panel-tabs">
+        <div class="ptab active" onclick="switchTab(this,'xml')">XML</div>
+        <div class="ptab" onclick="switchTab(this,'val')">Validierung</div>
+      </div>
+    </div>
+    <div class="panel-body">
+
+      <!-- XML Tab -->
+      <div id="tab-xml">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:10px;letter-spacing:1px;">
+          GENERIERTES XML · SMV Version 2.0 · XSD: gkv-datenaustausch.de
+        </div>
+        <div class="xml-block" id="xml-output">
+<span class="xc">&lt;!-- Testdaten hier generieren --&gt;</span>
+<span class="xc">&lt;!-- Formular ausfüllen und --&gt;</span>
+<span class="xc">&lt;!-- "Testdaten generieren" klicken --&gt;</span>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn btn-secondary" style="font-size:10px;padding:6px 14px;" onclick="copyXML()">⎘ XML kopieren</button>
+        </div>
+      </div>
+
+      <!-- Validierung Tab -->
+      <div id="tab-val" style="display:none">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:10px;letter-spacing:1px;">
+          PLAUSIBILITÄTSPRÜFUNG · Vorschau (Phase 3)
+        </div>
+        <div class="v-list" id="val-list">
+          <div class="v-item v-warn">
+            <span class="v-icon">⚠</span>
+            <div class="v-text">
+              Validierung wird in Phase 3 vollständig implementiert.
+              <span class="v-field">Aktuell: Vorschau-Modus</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+</div>
+
+<!-- Mockup Ribbon -->
+<div class="mockup-ribbon">⬡ Mockup v0.1 · Nicht produktiv</div>
+
+<script>
+  // ── State ──
+  let currentMG = '20';
+  let currentTab = 'xml';
+
+  const mgDescriptions = {
+    '10': 'Meldegrund 10 – Versicherungsstatus: Die Krankenkasse meldet der Hochschule ob eine Versicherung vorliegt oder nicht. (Anlage 1)',
+    '11': 'Meldegrund 11 – Beginn Versicherung KK-Wechsel: Die neu aufnehmende KK meldet den Beginn der Versicherung. (Anlage 1)',
+    '12': 'Meldegrund 12 – Beitragsverzug: Krankenkasse meldet Zahlungsverzug 3 Wochen nach Eintritt. (Anlage 1)',
+    '13': 'Meldegrund 13 – Begleichung rückständiger Beiträge: Krankenkasse meldet Begleichung. (Anlage 1)',
+    '20': 'Meldegrund 20 – Beginn des Studiums: Die Hochschule meldet Beginn des Semesters und Tag der Einschreibung nach Eingang der Meldung über den Versicherungsstatus. (Anlage 2)',
+    '30': 'Meldegrund 30 – Ende des Studiums: Die Hochschule meldet das Semesterende der Exmatrikulation, ggf. mit Tag der Exmatrikulation wenn vor Semesterende. (Anlage 2)',
+  };
+
+  function selectMG(el, code) {
+    document.querySelectorAll('.mg-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    currentMG = code;
+    document.getElementById('mg-desc').textContent = mgDescriptions[code];
+  }
+
+  function toggleAbility(btn) {
+    if (btn.classList.contains('disabled-ab')) return;
+    btn.classList.toggle('on');
+  }
+
+  function switchTab(el, tab) {
+    document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    currentTab = tab;
+    document.getElementById('tab-xml').style.display = tab === 'xml' ? '' : 'none';
+    document.getElementById('tab-val').style.display = tab === 'val' ? '' : 'none';
+  }
+
+  // ── Validation helpers ──
+  function validateKVNR(input) {
+    const v = input.value;
+    const ok = /^[A-Za-z]\d{9}$/.test(v);
+    input.className = 'form-input ' + (v.length === 0 ? '' : ok ? 'valid' : 'invalid');
+    const hint = document.getElementById('kvnr-hint');
+    hint.className = 'form-hint' + (v.length > 0 && !ok ? ' err' : '');
+    hint.textContent = v.length === 0 ? '10 Stellen: 1 Buchstabe + 9 Ziffern' :
+      ok ? '✓ Format korrekt' : '✗ Format ungültig – Beispiel: A123456789';
+  }
+
+  function validateBBNR(input) {
+    const v = input.value;
+    const ok = /^\d{8}$/.test(v);
+    input.className = 'form-input ' + (v.length === 0 ? '' : ok ? 'valid' : 'invalid');
+    const hint = document.getElementById('bbnr-hint');
+    hint.className = 'form-hint' + (v.length > 0 && !ok ? ' err' : '');
+    hint.textContent = v.length === 0 ? '8-stellige Betriebsnummer der Krankenkasse' :
+      ok ? '✓ Format korrekt' : '✗ Muss genau 8 Ziffern enthalten';
+  }
+
+  function validateAbsender(input) {
+    const v = input.value;
+    const ok = v.length >= 8;
+    input.className = 'form-input ' + (v.length === 0 ? '' : ok ? 'valid' : 'invalid');
+  }
+
+  function validateAlter(input) {
+    if (!input.value) return;
+    const birth = new Date(input.value);
+    const now = new Date();
+    const age = (now - birth) / (1000 * 60 * 60 * 24 * 365.25);
+    const hint = document.getElementById('gebdat-hint');
+    if (age > 37) {
+      hint.className = 'form-hint err';
+      hint.textContent = '⚠ Alter > 37 Jahre – Versicherungspflicht als Student i.d.R. nicht mehr möglich (§ 5 Abs. 1 Nr. 9 SGB V)';
+    } else if (age > 30) {
+      hint.className = 'form-hint';
+      hint.style.color = 'var(--warn)';
+      hint.textContent = '⚠ Alter > 30 Jahre – Verlängerung der Versicherungspflicht muss individuell geprüft werden';
+    } else {
+      hint.className = 'form-hint';
+      hint.style.color = '';
+      hint.textContent = 'Versicherungspflicht bis max. 30. LJ (§ 5 Abs. 1 Nr. 9 SGB V)';
+    }
+  }
+
+  // ── Demo fill ──
+  function fillDemo() {
+    document.getElementById('kvnr').value = 'A123456780';
+    validateKVNR(document.getElementById('kvnr'));
+    document.getElementById('bbnr').value = '10012345';
+    validateBBNR(document.getElementById('bbnr'));
+    document.getElementById('absender').value = 'HS10987654';
+    document.getElementById('nachname').value = 'Mustermann';
+    document.getElementById('vorname').value = 'Maria';
+    document.getElementById('gebdat').value = '2002-03-15';
+    validateAlter(document.getElementById('gebdat'));
+    document.getElementById('sembegin').value = '2025-10-01';
+    document.getElementById('einschreibung').value = '2025-10-01';
+    document.getElementById('storno').value = 'N';
+    document.getElementById('strasse').value = 'Musterstraße 12, 10115 Berlin';
+    generateXML();
+  }
+
+  function clearForm() {
+    ['kvnr','bbnr','absender','nachname','vorname','gebdat','sembegin','einschreibung','strasse'].forEach(id => {
+      document.getElementById(id).value = '';
+      const el = document.getElementById(id);
+      if (el.classList.contains('valid') || el.classList.contains('invalid')) {
+        el.className = 'form-input';
+      }
+    });
+    document.getElementById('storno').value = 'N';
+    document.getElementById('xml-output').innerHTML = '<span class="xc">&lt;!-- Felder leeren abgeschlossen --&gt;</span>';
+    document.getElementById('val-list').innerHTML = '<div class="v-item v-warn"><span class="v-icon">⚠</span><div class="v-text">Validierung wird in Phase 3 vollständig implementiert.<span class="v-field">Aktuell: Vorschau-Modus</span></div></div>';
+  }
+
+  // ── XML generation ──
+  function generateXML() {
+    const kvnr = document.getElementById('kvnr').value || '???';
+    const bbnr = document.getElementById('bbnr').value || '???';
+    const absender = document.getElementById('absender').value || '???';
+    const nachname = document.getElementById('nachname').value || '???';
+    const vorname = document.getElementById('vorname').value || '???';
+    const gebdat = (document.getElementById('gebdat').value || '????-??-??').replace(/-/g,'');
+    const sembegin = (document.getElementById('sembegin').value || '????-??-??').replace(/-/g,'').slice(0,8);
+    const einschreibung = (document.getElementById('einschreibung').value || '????-??-??').replace(/-/g,'');
+    const storno = document.getElementById('storno').value || 'N';
+    const strasse = document.getElementById('strasse').value;
+    const now = new Date();
+    const erstellDat = now.toISOString().slice(0,10).replace(/-/g,'');
+    const erstellZeit = now.toTimeString().slice(0,8).replace(/:/g,'');
+
+    const stornLine = storno === 'J'
+      ? `\n  <span class="xa">STORNOKENNZEICHEN</span>=<span class="xv">"J"</span>` : '';
+
+    const anschriftBlock = strasse
+      ? `\n  <span class="xt">&lt;ANSCHRIFT&gt;</span><span class="xv">${strasse}</span><span class="xt">&lt;/ANSCHRIFT&gt;</span>  <span class="xc">&lt;!-- Neu ab v2.0 --&gt;</span>` : '';
+
+    let xmlContent = '';
+
+    if (currentMG === '20' || currentMG === '30') {
+      // Hochschule → KK
+      xmlContent = `<span class="xc">&lt;!-- Anlage 2: Meldung der Hochschule --&gt;</span>
+<span class="xc">&lt;!-- Meldegrund ${currentMG} · Version 2.0 · § 199a SGB V --&gt;</span>
+<span class="xt">&lt;KVdS_Meldung</span>
+  <span class="xa">version</span>=<span class="xv">"2.0"</span>
+  <span class="xa">erstellDat</span>=<span class="xv">"${erstellDat}"</span>
+  <span class="xa">erstellZeit</span>=<span class="xv">"${erstellZeit}"</span>
+<span class="xt">&gt;</span>
+  <span class="xt">&lt;ABSENDERNUMMER&gt;</span><span class="xv">${absender}</span><span class="xt">&lt;/ABSENDERNUMMER&gt;</span>
+  <span class="xt">&lt;EMPFAENGER_BBNR&gt;</span><span class="xv">${bbnr}</span><span class="xt">&lt;/EMPFAENGER_BBNR&gt;</span>
+  <span class="xt">&lt;MELDEGRUND&gt;</span><span class="xv">${currentMG}</span><span class="xt">&lt;/MELDEGRUND&gt;</span>${stornLine}
+  <span class="xt">&lt;VERSICHERTER&gt;</span>
+    <span class="xt">&lt;KVNR&gt;</span><span class="xv">${kvnr}</span><span class="xt">&lt;/KVNR&gt;</span>
+    <span class="xt">&lt;NACHNAME&gt;</span><span class="xv">${nachname}</span><span class="xt">&lt;/NACHNAME&gt;</span>
+    <span class="xt">&lt;VORNAME&gt;</span><span class="xv">${vorname}</span><span class="xt">&lt;/VORNAME&gt;</span>
+    <span class="xt">&lt;GEBURTSDATUM&gt;</span><span class="xv">${gebdat}</span><span class="xt">&lt;/GEBURTSDATUM&gt;</span>${anschriftBlock}
+  <span class="xt">&lt;/VERSICHERTER&gt;</span>
+  <span class="xt">&lt;STUDIUMSDATEN&gt;</span>
+    <span class="xt">&lt;SEMESTERBEGINN&gt;</span><span class="xv">${sembegin}</span><span class="xt">&lt;/SEMESTERBEGINN&gt;</span>
+    <span class="xt">&lt;EINSCHREIBEDATUM&gt;</span><span class="xv">${einschreibung}</span><span class="xt">&lt;/EINSCHREIBEDATUM&gt;</span>
+  <span class="xt">&lt;/STUDIUMSDATEN&gt;</span>
+<span class="xt">&lt;/KVdS_Meldung&gt;</span>`;
+    } else {
+      // KK → Hochschule
+      xmlContent = `<span class="xc">&lt;!-- Anlage 1: Meldung der Krankenkasse --&gt;</span>
+<span class="xc">&lt;!-- Meldegrund ${currentMG} · Version 2.0 · § 199a SGB V --&gt;</span>
+<span class="xt">&lt;KVdS_Meldung</span>
+  <span class="xa">version</span>=<span class="xv">"2.0"</span>
+  <span class="xa">erstellDat</span>=<span class="xv">"${erstellDat}"</span>
+<span class="xt">&gt;</span>
+  <span class="xt">&lt;ABSENDER_BBNR&gt;</span><span class="xv">${bbnr}</span><span class="xt">&lt;/ABSENDER_BBNR&gt;</span>
+  <span class="xt">&lt;EMPFAENGER_HS&gt;</span><span class="xv">${absender}</span><span class="xt">&lt;/EMPFAENGER_HS&gt;</span>
+  <span class="xt">&lt;MELDEGRUND&gt;</span><span class="xv">${currentMG}</span><span class="xt">&lt;/MELDEGRUND&gt;</span>${stornLine}
+  <span class="xt">&lt;VERSICHERTER&gt;</span>
+    <span class="xt">&lt;KVNR&gt;</span><span class="xv">${kvnr}</span><span class="xt">&lt;/KVNR&gt;</span>
+    <span class="xt">&lt;NACHNAME&gt;</span><span class="xv">${nachname}</span><span class="xt">&lt;/NACHNAME&gt;</span>
+    <span class="xt">&lt;VORNAME&gt;</span><span class="xv">${vorname}</span><span class="xt">&lt;/VORNAME&gt;</span>
+    <span class="xt">&lt;GEBURTSDATUM&gt;</span><span class="xv">${gebdat}</span><span class="xt">&lt;/GEBURTSDATUM&gt;</span>
+  <span class="xt">&lt;/VERSICHERTER&gt;</span>
+<span class="xt">&lt;/KVdS_Meldung&gt;</span>`;
+    }
+
+    document.getElementById('xml-output').innerHTML = xmlContent;
+    runValidation();
+  }
+
+  // ── Validation (Preview) ──
+  function runValidation() {
+    const kvnr = document.getElementById('kvnr').value;
+    const bbnr = document.getElementById('bbnr').value;
+    const nachname = document.getElementById('nachname').value;
+    const gebdat = document.getElementById('gebdat').value;
+    const einschreibung = document.getElementById('einschreibung').value;
+    const sembegin = document.getElementById('sembegin').value;
+
+    const checks = [];
+
+    // KVNR
+    if (/^[A-Za-z]\d{9}$/.test(kvnr)) {
+      checks.push({ type:'ok', msg:'KVNR – Format korrekt (1 Buchstabe + 9 Ziffern)', field:'KVNR' });
+    } else {
+      checks.push({ type:'err', msg:'KVNR – Ungültiges Format. Erwartet: 1 Buchstabe + 9 Ziffern', field:'KVNR' });
+    }
+
+    // BBNR
+    if (/^\d{8}$/.test(bbnr)) {
+      checks.push({ type:'ok', msg:'Betriebsnummer KK – 8-stellig, korrekt', field:'EMPFAENGER_BBNR' });
+    } else {
+      checks.push({ type:'err', msg:'Betriebsnummer KK – Muss genau 8 Ziffern enthalten', field:'EMPFAENGER_BBNR' });
+    }
+
+    // Pflichtfelder
+    if (nachname.trim()) {
+      checks.push({ type:'ok', msg:'Nachname – vorhanden', field:'NACHNAME' });
+    } else {
+      checks.push({ type:'err', msg:'Nachname – Pflichtfeld fehlt', field:'NACHNAME' });
+    }
+
+    // Alter
+    if (gebdat) {
+      const age = (new Date() - new Date(gebdat)) / (1000 * 60 * 60 * 24 * 365.25);
+      if (age > 37) {
+        checks.push({ type:'err', msg:'Alter > 37 Jahre – Versicherungspflicht nach § 5 Abs. 1 Nr. 9 SGB V i.d.R. nicht mehr möglich', field:'GEBURTSDATUM' });
+      } else if (age > 30) {
+        checks.push({ type:'warn', msg:'Alter > 30 Jahre – Verlängerungstatbestand nach § 5 Abs. 1 Nr. 9 SGB V muss individuell geprüft werden', field:'GEBURTSDATUM' });
+      } else {
+        checks.push({ type:'ok', msg:'Geburtsdatum – Alter im versicherungspflichtigen Bereich', field:'GEBURTSDATUM' });
+      }
+    }
+
+    // Einschreibedatum vs Semesterbeginn
+    if (einschreibung && sembegin) {
+      if (new Date(einschreibung) < new Date(sembegin)) {
+        checks.push({ type:'warn', msg:'Einschreibedatum liegt vor Semesterbeginn – Mitgliedschaft beginnt frühestens mit Semesterbeginn (§ 199a SGB V)', field:'EINSCHREIBEDATUM' });
+      } else {
+        checks.push({ type:'ok', msg:'Einschreibedatum ≥ Semesterbeginn – plausibel', field:'EINSCHREIBEDATUM' });
+      }
+    }
+
+    checks.push({ type:'warn', msg:'Vollständige Plausibilitätsprüfung folgt in Phase 3 (inkl. XSD-Validierung)', field:'INFO' });
+
+    const list = document.getElementById('val-list');
+    list.innerHTML = checks.map(c => `
+      <div class="v-item v-${c.type}">
+        <span class="v-icon">${c.type === 'ok' ? '✓' : c.type === 'err' ? '✗' : '⚠'}</span>
+        <div class="v-text">
+          ${c.msg}
+          <span class="v-field">${c.field}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function copyXML() {
+    const xml = document.getElementById('xml-output').innerText;
+    navigator.clipboard.writeText(xml).then(() => {
+      const btn = event.target;
+      btn.textContent = '✓ Kopiert!';
+      setTimeout(() => btn.textContent = '⎘ XML kopieren', 2000);
+    });
+  }
+</script>
+</body>
+</html>
