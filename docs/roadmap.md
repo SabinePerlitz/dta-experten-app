@@ -1,10 +1,11 @@
 # Roadmap: DTA-Experten-Applikation
 
 ## Phase 1 — Studenten-Meldeverfahren (aktuell)
-- [ ] Repository & Struktur einrichten
-- [ ] Mockup: Testdaten-Generator
-- [ ] Verfahrensdaten aus gkv-datenaustausch.de einpflegen
-- [ ] Testdaten-Generator implementieren
+- [x] Repository & Struktur einrichten
+- [x] Mockup v0.1: Testdaten-Generator
+- [ ] Verfahrensdaten aus gkv-datenaustausch.de vollständig einpflegen
+- [ ] Next.js Projekt initialisieren
+- [ ] Testdaten-Generator als echte App-Komponente umsetzen
 
 ## Phase 2 — Erweiterung (geplant)
 - [ ] §302 Verfahren: Fehlercodes + Testdaten
